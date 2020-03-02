@@ -1,0 +1,137 @@
+/////////////////////////////////////////////////////////////////
+//
+// Name: Project 0 Bravo
+// Author: Ivan Pirsl (droniton@gmail.com)
+// Date: 03/02/2020
+// Description: Series of apex methods to demonstrate
+// basic understanding of coding concepts.
+//
+/////////////////////////////////////////////////////////////////
+public class P0B {
+    // Contains some base cases, then calls a recursive utility method which operates
+    // first on the first two digits of the sequence
+    public static Integer nFibonacci(Integer n) {
+        if (n < 1)
+            return 0;
+        if (n <= 2)
+            return 1;
+        return recFibUtility(1, 1, n-2);
+    }
+    // Adds the given numbers together and keeps the larger, continuing the
+    // Fibonacci series until the nth digit is reached, which is then returned
+    public static Integer recFibUtility(Integer x, Integer y, Integer n) {
+        if (n == 0)
+            return x;
+        Integer t = x;
+        x += y;
+        y = t;
+        return recFibUtility(x, y, --n);
+    }
+    // Creates a list of fibonacci numbers which keeps expanding
+    //  until the target number is reached, which it returns
+	public static Integer altListNFibonacci(Integer n) {
+        if (n < 1)
+            return 0;
+        
+        Integer[] fib = new List<Integer>{1,1};
+        while (fib.size() < n)
+            fib.add(fib[fib.size()-2] + fib[fib.size()-1]);
+        return fib.get(fib.size()-1);
+    }
+    // Holds only two values, those which need to be kept, and then
+    // alternates adding and assigning them until the target number
+    // is reached, which is then returned
+    public static Integer altTwoDigitNFibonacci(Integer n) {
+    if (n < 1)
+       return 0;
+    Integer[] fibList = new List<Integer>{1,1};
+    Boolean alt = true;
+    while (--n > 0) {
+        if (alt)
+  			fibList[1] += fibList[0];
+        else fibList[0] += fibList[1];
+        alt = !alt;
+    }
+    if (alt)
+        return fibList[1];
+    return fibList[0];
+}
+    // Performs a merge sort to sort the given array
+    public static Integer[] sortArray(Integer[] intList) {
+        // Return arrays too small to sort
+        if (intList.size() < 2)
+            return intList;
+        
+        // Initialize our arrays, listOne takes the extra if intList is of odd size
+        Integer[] listOne = new List<Integer>();
+        Integer[] listTwo = new List<Integer>();
+        Integer x = 0;
+        while (x < (intList.size()/2 + Math.mod(intList.size(),2)))
+            listOne.add(intList[x++]);
+        while (x < intList.size())
+            listTwo.add(intList[x++]);
+
+        // Recursion!
+		listOne = P0B.sortArray(listOne);
+        listTwo = P0B.sortArray(listTwo);
+        
+        x = 0;
+        Integer y = 0;
+        // Sort!
+        while (x+y < intList.size()) {
+            if (x == listOne.size())
+                intList[x+y++] = listTwo[y];
+            else if (y == listTwo.size())
+                intList[y+x++] = listOne[x];
+            else if (listOne[x] < listTwo[y])
+                intList[y+x++] = listOne[x];
+            else intList[x+y++] = listTwo[y];
+        }
+        return intList;
+	}
+    public static Integer nFactorial(Integer n) {
+        if (n <= 0)
+            return 1;
+        Integer factorial = 1;
+        while (n > 0)
+        {
+            factorial *= n--;
+        }
+        return factorial;
+    }
+    public static Integer[] rotateLeftNTimes(Integer[] intList, Integer n) {
+		if (n > intList.size() || n < -intList.size())
+            n = math.mod(n,intList.size());
+        Integer[] newList = new List<Integer>(intList.size());
+        for (Integer i = 0; i < intList.size(); i++) {
+            if (i+n < intList.size())
+                newList[i] = intList[i+n];
+            else newList[i] = intList[(i+n)-intList.size()];
+        }
+        return newList;
+    }
+    public static Boolean bracketsAreBalanced(String s) {
+        // Base case
+        if (s.length() < 2)
+            return false;
+        // Parentheses, square brackets, curly brackets
+        List<Integer> brackets = new List<Integer>();
+        Integer bracket;
+        for (Integer i = 0; i < s.length(); i++) {
+            bracket = s.charAt(i);
+            switch on bracket {
+            	// ( becomes )
+            	when 40 {bracket = 41; brackets.add(bracket);}
+                // [ becomes ]
+            	when 91 {bracket = 93; brackets.add(bracket);}
+                // { becomes }
+            	when 123 {bracket = 125; brackets.add(bracket);}
+                when else {
+                    if (!brackets.isEmpty() && bracket == brackets.get(brackets.size()-1))
+                        brackets.remove(brackets.size()-1);
+                }
+        	}
+        }     
+		return brackets.isEmpty();
+    }
+}
