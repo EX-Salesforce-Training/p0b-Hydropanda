@@ -74,4 +74,51 @@ public class P0BTest {
         system.assert(!P0B.bracketsAreBalanced('( ( )'));
         system.assert(!P0B.bracketsAreBalanced('( [ ) ]'));
     }
+    @isTest
+    public static void updateAccountSizeTest() {
+        List<Account> testAccs = new List<Account>{new Account(Name = 'A', NumberOfEmployees = 0),
+            new Account(Name = 'B', NumberOfEmployees = 5), new Account(Name = 'C', NumberOfEmployees = 1001),
+            new Account(Name = 'D', NumberOfEmployees = 10001)};
+        insert testAccs;
+    	P0B.updateAccountSize();
+        testAccs.clear();
+        
+        testAccs = [Select Size__c FROM Account ORDER BY NumberOfEmployees ASC];
+        System.assertEquals(null, testAccs[0].Size__c);
+        System.assertEquals('Small', testAccs[1].Size__c);
+        System.assertEquals('Medium', testAccs[2].Size__c);
+        System.assertEquals('Large', testAccs[3].Size__c);
+    }
+    @isTest
+    public static void updateCALeadsTest() {
+        List<Lead> testLeads = new List<Lead>{
+            new Lead(LastName = 'A', Company = 'A Inc.', Status = 'Open - Not Contacted', State = 'MD'), 
+            new Lead(LastName = 'B', Company = 'B Inc.', Status = 'Open - Not Contacted', State = 'DE'), 
+            new Lead(LastName = 'C', Company = 'C Inc.', Status = 'Open - Not Contacted', State = 'CA'),
+            new Lead(LastName = 'D', Company = 'D Inc.', Status = 'Open - Not Contacted', State = 'PA')};
+        insert testLeads;
+        testLeads.clear();
+        
+        P0B.updateCALeads();
+        testLeads = [SELECT Status, Description FROM Lead ORDER BY Company];
+        System.assertEquals('Open - Not Contacted', testLeads[0].Status);
+        System.assertEquals('Open - Not Contacted', testLeads[1].Status);
+        System.assertEquals('Closed - Not Converted', testLeads[2].Status);
+        System.assert(testLeads[2].Description.contains('We are no longer doing business in California.'));
+        System.assertEquals('Open - Not Contacted', testLeads[3].Status);
+    }
+    @isTest
+    public static void closePastDueOpportunitiesTest() {
+        List<Opportunity> testOpps = new List<Opportunity>{new Opportunity(Name = 'A', StageName = 'Prospecting', CloseDate = Date.newInstance(2020,5,11)), 
+            new Opportunity(Name = 'B', StageName = 'Prospecting', CloseDate = Date.today()), 
+            new Opportunity(Name = 'C', StageName = 'Prospecting', CloseDate = Date.newInstance(2020,3,5))};
+        insert testOpps;
+        testOpps.clear();
+        
+        P0B.closePastDueOpportunities();
+        testOpps = [SELECT StageName FROM Opportunity ORDER BY Name ASC LIMIT 3];
+        System.assertEquals('Prospecting', testOpps[0].StageName);
+        System.assertEquals('Prospecting', testOpps[1].StageName);
+        System.assertEquals('Closed Lost', testOpps[2].StageName);
+    }
 }
