@@ -168,9 +168,9 @@ public class P0B {
 	 */
 	public static void updateCALeads() {
         List<Lead> leadList = [SELECT Status, Description FROM Lead WHERE State = 'CA'];
-        for (Lead l: leadList) {
-            l.Status = 'Closed - Not Converted';
-            l.Description += '\nWe are no longer doing business in California.';
+        for (Integer i = 0; i < leadList.size(); i++) {
+            leadList[i].Status = 'Closed - Not Converted';
+            leadList[i].Description += '\nWe are no longer doing business in California.';
         }
         update leadList;
 	}
